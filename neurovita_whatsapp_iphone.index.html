@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#8b7cff" />
+<title>NeuroVita</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+:root{
+  --roxo:#8b7cff;
+  --roxo2:#7aa7ff;
+  --verde:#2ecc71;
+  --branco:#ffffff;
+  --texto:#202124;
+  --bot:#f3f2ff;
+  --user:#8b7cff;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html, body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:'Poppins', Arial, sans-serif;
+  background:linear-gradient(135deg,var(--roxo),var(--roxo2));
+  color:var(--texto);
+  -webkit-text-size-adjust:100%;
+}
+
+body.dark{
+  --branco:#151625;
+  --texto:#f5f5f5;
+  --bot:#24263a;
+  --user:#7f73ff;
+  background:linear-gradient(135deg,#252247,#35446d);
+}
+
+.app{
+  width:100%;
+  max-width:560px;
+  height:100dvh;
+  min-height:100svh;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+header{
+  flex:0 0 auto;
+  text-align:center;
+  color:#fff;
+  padding:12px 12px 8px;
+}
+.logo{ font-size:23px; font-weight:700; letter-spacing:.3px; }
+.logo span{ color:#64f2a4; }
+header small{ display:block; opacity:.9; margin-top:2px; }
+.actions{ display:flex; justify-content:center; gap:8px; margin-top:9px; }
+.action-btn{
+  border:0;
+  border-radius:999px;
+  padding:9px 13px;
+  background:rgba(255,255,255,.22);
+  color:#fff;
+  font-size:14px;
+  font-family:inherit;
+}
+
+.open-safari{
+  display:none;
+  margin:8px 12px 0;
+  padding:12px;
+  border-radius:18px;
+  background:#fff7d6;
+  color:#3d3210;
+  font-size:14px;
+  line-height:1.35;
+}
+.open-safari button{
+  margin-top:8px;
+  width:100%;
+  border:0;
+  border-radius:14px;
+  padding:11px;
+  background:#2ecc71;
+  color:white;
+  font-family:inherit;
+  font-weight:700;
+  font-size:15px;
+}
+
+#chat{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:rgba(255,255,255,.96);
+  border-radius:26px 26px 0 0;
+  padding:16px 12px 12px;
+  position:relative;
+}
+body.dark #chat{ background:rgba(21,22,37,.96); }
+
+#chat::before{
+  content:"NeuroVita";
+  position:fixed;
+  pointer-events:none;
+  font-size:48px;
+  color:rgba(0,0,0,.045);
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-weight:700;
+}
+body.dark #chat::before{ color:rgba(255,255,255,.045); }
+
+.msg{
+  position:relative;
+  z-index:1;
+  max-width:86%;
+  width:fit-content;
+  padding:12px 14px;
+  border-radius:20px;
+  margin:7px 0;
+  font-size:15px;
+  line-height:1.38;
+  overflow-wrap:anywhere;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+.bot{ background:var(--bot); color:var(--texto); border-bottom-left-radius:8px; }
+.user{ background:var(--user); color:#fff; margin-left:auto; border-bottom-right-radius:8px; }
+
+.input-area{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px;
+  background:var(--branco);
+  border-top:1px solid rgba(0,0,0,.08);
+}
+
+#input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  border-radius:999px;
+  padding:13px 15px;
+  background:#f1f1f5;
+  color:#111;
+  font-family:inherit;
+  font-size:16px; /* impede zoom no iPhone */
+  line-height:20px;
+  -webkit-user-select:text;
+  user-select:text;
+  touch-action:manipulation;
+}
+body.dark #input{ background:#24263a; color:#fff; }
+
+.send-btn{
+  flex:0 0 48px;
+  width:48px;
+  height:48px;
+  border:0;
+  border-radius:50%;
+  background:var(--verde);
+  color:#fff;
+  font-size:20px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  touch-action:manipulation;
+}
+
+@media (max-width:380px){
+  .logo{ font-size:21px; }
+  .msg{ font-size:14px; max-width:90%; }
+  header{ padding-top:9px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">neuro<span>vita</span></div>
+    <small>apoio emocional inteligente</small>
+    <div class="actions">
+      <button class="action-btn" type="button" id="limparBtn">Limpar</button>
+      <button class="action-btn" type="button" id="temaBtn">Modo noturno</button>
+    </div>
+    <div class="open-safari" id="whatsAviso">
+      Se abriu dentro do WhatsApp e o teclado não funcionar bem, toque em <b>Compartilhar</b> e escolha <b>Abrir no Safari</b>.
+      <button type="button" id="copiarLink">Copiar link para abrir no Safari</button>
+    </div>
+  </header>
+
+  <main id="chat" aria-live="polite"></main>
+
+  <form class="input-area" id="formChat" autocomplete="off">
+    <input id="input" type="text" inputmode="text" autocomplete="off" autocorrect="on" autocapitalize="sentences" placeholder="Digite sua mensagem..." />
+    <button class="send-btn" type="submit" aria-label="Enviar">➤</button>
+  </form>
+</div>
+
+<script>
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const form = document.getElementById('formChat');
+const limparBtn = document.getElementById('limparBtn');
+const temaBtn = document.getElementById('temaBtn');
+const aviso = document.getElementById('whatsAviso');
+const copiarLink = document.getElementById('copiarLink');
+
+function ehWhatsAppOuInApp(){
+  const ua = navigator.userAgent || '';
+  return /WhatsApp|FBAN|FBAV|Instagram|Line|MicroMessenger/i.test(ua);
+}
+
+if(ehWhatsAppOuInApp()) aviso.style.display = 'block';
+
+copiarLink.addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(location.href);
+    copiarLink.innerText = 'Link copiado';
+  }catch(e){
+    copiarLink.innerText = 'Copie pela barra de endereço';
+  }
+});
+
+function rolar(){
+  requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
+}
+
+function addMsg(texto, lado){
+  const div = document.createElement('div');
+  div.className = 'msg ' + lado;
+  div.innerHTML = texto;
+  chat.appendChild(div);
+  rolar();
+}
+
+function limparChat(){ chat.innerHTML = ''; input.focus(); }
+
+function digitando(){
+  removerDigitando();
+  const d = document.createElement('div');
+  d.id = 'typing';
+  d.className = 'msg bot';
+  d.textContent = 'Digitando...';
+  chat.appendChild(d);
+  rolar();
+}
+function removerDigitando(){ const d = document.getElementById('typing'); if(d) d.remove(); }
+
+function normalizar(texto){
+  return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function IA(texto){
+  const t = normalizar(texto);
+
+  if(t.includes('molest') || t.includes('abus') || t.includes('estupro') || t.includes('estupr') || t.includes('estrup') || t.includes('assedi') || t.includes('mexeu comigo') || t.includes('tocou em mim') || t.includes('me pegou')){
+    const r = [
+      '🚨 Sinto muito que isso tenha acontecido. A culpa não é sua.<br><br>Se você estiver em perigo agora, ligue <b>190</b>. Você também pode pedir ajuda pelo <b>Disque 100</b>.',
+      '🚨 Isso é sério e você merece proteção. Procure um adulto de confiança, escola, posto de saúde ou delegacia.<br><br>Se estiver em risco imediato: <b>190</b>.',
+      '🚨 Você não precisa passar por isso sozinho. Fale com alguém seguro agora. Para denunciar violações, ligue <b>Disque 100</b>.'
+    ];
+    return r[Math.floor(Math.random()*r.length)];
+  }
+
+  if(t.includes('oi') || t.includes('ola') || t.includes('bom dia') || t.includes('boa tarde') || t.includes('boa noite')){
+    return '😊 Oi! Estou aqui pra te ouvir. Como você está se sentindo agora?';
+  }
+
+  if(t.includes('me matar') || t.includes('morrer') || t.includes('suic')){
+    const r = [
+      '🆘 Eu sinto muito que você esteja passando por isso. Você não precisa ficar sozinho agora.<br><br>📞 Ligue para o <b>CVV 188</b> ou chame alguém de confiança imediatamente.',
+      '🆘 Sua vida importa. Nesse momento, o mais importante é não ficar sozinho.<br><br>📞 Ligue <b>188 (CVV)</b> ou procure alguém perto de você agora.',
+      '🆘 Eu estou aqui com você, mas isso é sério. Chame uma pessoa de confiança agora e, se estiver em perigo, ligue <b>190</b>.<br><br>Também existe o <b>CVV 188</b>, 24h.'
+    ];
+    return r[Math.floor(Math.random()*r.length)];
+  }
+
+  if(t.includes('me bateram') || t.includes('apanhei') || t.includes('agressao') || t.includes('me agrediram')){
+    return '🚨 Sinto muito que isso tenha acontecido. Se você estiver em perigo agora, procure um lugar seguro e ligue para <b>190</b>.<br><br>Se for algo dentro de casa, também pode pedir ajuda pelo <b>Disque 100</b>.';
+  }
+
+  if(t.includes('sem casa') || t.includes('expulso') || t.includes('me expulsaram')){
+    return '🏠 Isso é muito sério. Tente ir para um lugar seguro: casa de alguém confiável, escola, igreja, posto de saúde ou delegacia.<br><br>Se você for menor de idade, peça ajuda ao <b>Conselho Tutelar</b> ou ligue <b>Disque 100</b>.';
+  }
+
+  if(t.includes('familia') || t.includes('pai') || t.includes('mae') || t.includes('padrasto') || t.includes('madrasta') || t.includes('irmao') || t.includes('casa') || t.includes('briga')){
+    const r = [
+      '💜 Problemas dentro de casa podem machucar muito. Você está seguro agora?',
+      '🏠 Sinto muito por isso. Tente procurar um adulto de confiança, escola, parente ou vizinho seguro.',
+      '🚨 Se tiver risco de agressão agora, procure sair para um lugar seguro e ligue <b>190</b>.',
+      '💜 Você não precisa passar por isso sozinho. Quer me contar o que aconteceu em casa?'
+    ];
+    return r[Math.floor(Math.random()*r.length)];
+  }
+
+  if(t.includes('triste') || t.includes('depress') || t.includes('vazio')) return '💜 Sinto muito. Vamos com calma. O que está mais pesado pra você agora?';
+  if(t.includes('ansioso') || t.includes('ansiedade') || t.includes('medo')) return '💙 Respira comigo: puxa o ar por 4 segundos, segura 2 e solta devagar. Você está seguro agora?';
+
+  const respostas = ['Entendi… quer me contar mais?', 'Estou aqui com você. Pode falar.', 'Como isso te fez sentir?', 'Isso parece importante. O que aconteceu depois?'];
+  return respostas[Math.floor(Math.random()*respostas.length)];
+}
+
+function enviar(){
+  const texto = input.value.trim();
+  if(!texto) { input.focus(); return; }
+  addMsg(texto, 'user');
+  input.value = '';
+  input.focus();
+  digitando();
+  setTimeout(() => { removerDigitando(); addMsg(IA(texto), 'bot'); input.focus(); }, 500);
+}
+
+form.addEventListener('submit', (e) => { e.preventDefault(); enviar(); });
+limparBtn.addEventListener('click', limparChat);
+temaBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  temaBtn.textContent = document.body.classList.contains('dark') ? 'Modo claro' : 'Modo noturno';
+  input.focus();
+});
+
+// Ajuda o Safari/WhatsApp no iPhone a recalcular altura quando o teclado abre.
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', rolar);
+  window.visualViewport.addEventListener('scroll', rolar);
+}
+
+addMsg('Olá! Eu sou o NeuroVita. Pode digitar sua mensagem aqui embaixo. 💜', 'bot');
+setTimeout(() => input.focus(), 300);
+</script><script>
+if (navigator.userAgent.includes("WhatsApp")) {
+  const aviso = document.createElement("div");
+  aviso.innerHTML = `
+    <div style="
+      position:fixed;
+      bottom:20px;
+      left:10px;
+      right:10px;
+      background:#000;
+      color:#fff;
+      padding:15px;
+      border-radius:15px;
+      text-align:center;
+      z-index:9999;
+    ">
+      Para melhor experiência, abra no Safari 🍎<br><br>
+      <button onclick="copiarLink()">Copiar link</button>
+    </div>
+  `;
+  document.body.appendChild(aviso);
+}
+
+function copiarLink() {
+  navigator.clipboard.writeText(window.location.href);
+  alert("Link copiado! Cole no Safari");
+}
+</script>
+</body>
+</html>
